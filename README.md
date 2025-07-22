@@ -79,3 +79,53 @@ The initial changelog creates a `customer` table:
 - [Liquibase Docs](https://docs.liquibase.com/)
 - [Spring Boot + Liquibase](https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto.data-initialization.migration-tool.liquibase)
 - [AWS Aurora PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.Reference.html) 
+
+## 🛠️ Choose Your Migration Tool
+
+You can use **either Liquibase or Flyway** for database migrations. By default, Liquibase is enabled and Flyway is disabled. To switch:
+
+- **Enable Flyway, disable Liquibase:**
+  ```
+  export FLYWAY_ENABLED=true
+  export LIQUIBASE_ENABLED=false
+  ```
+- **Enable Liquibase, disable Flyway:**
+  ```
+  export FLYWAY_ENABLED=false
+  export LIQUIBASE_ENABLED=true
+  ```
+- You can also set these in your deployment environment or as JVM args:
+  `-DFLYWAY_ENABLED=true -DLIQUIBASE_ENABLED=false`
+
+## 🚀 Flyway Quick Start
+
+### 1. Migration Scripts
+- Place Flyway migration scripts in `src/main/resources/db/flyway/`.
+- Scripts must be named like `V1__init_customer.sql`, `V2__add_orders.sql`, etc.
+
+### 2. Example Initial Migration (`V1__init_customer.sql`):
+```sql
+CREATE TABLE IF NOT EXISTS customer (
+    id UUID PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### 3. Run with Spring Boot
+```
+mvn spring-boot:run -Dspring-boot.run.profiles=local -DFLYWAY_ENABLED=true -DLIQUIBASE_ENABLED=false
+```
+
+### 4. Run with Flyway CLI (optional)
+If you want to use the Flyway CLI, point it to the same database and migration folder.
+
+### 5. Best Practices
+- Use semantic versioning in script names (`V1__`, `V2__`, ...)
+- Test locally before applying to Aurora
+- Use `baseline-on-migrate: true` for new databases
+- Use the same schema and table names as in Liquibase for consistency
+
+--- 

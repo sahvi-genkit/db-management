@@ -1,0 +1,1 @@
+# Ensures db/flyway is tracked by git if empty. 

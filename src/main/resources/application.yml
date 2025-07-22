@@ -12,13 +12,19 @@ spring:
       hibernate:
         format_sql: true
   liquibase:
-    enabled: true
+    enabled: ${LIQUIBASE_ENABLED:true}
     change-log: classpath:db/changelog/db.changelog-master.xml
     default-schema: liquibase_schema
     liquibase-schema: liquibase_schema
     contexts: "default"
     parameters:
       schema: public
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+    locations: classpath:db/flyway
+    schemas: public
+    baseline-on-migrate: true
+    table: flyway_schema_history
 
 ---
 spring:
@@ -31,6 +37,12 @@ spring:
     password: ${AURORA_PASSWORD:aurorapass}
   liquibase:
     contexts: "prod"
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+    locations: classpath:db/flyway
+    schemas: public
+    baseline-on-migrate: true
+    table: flyway_schema_history
 
 ---
 spring:
@@ -42,4 +54,10 @@ spring:
     username: ${LOCAL_DB_USER:postgres}
     password: ${LOCAL_DB_PASSWORD:password}
   liquibase:
-    contexts: "local" 
+    contexts: "local"
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+    locations: classpath:db/flyway
+    schemas: public
+    baseline-on-migrate: true
+    table: flyway_schema_history 
