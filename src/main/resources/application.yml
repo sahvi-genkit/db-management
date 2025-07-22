@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:sampledb}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    default-schema: liquibase_schema
+    liquibase-schema: liquibase_schema
+    contexts: "default"
+    parameters:
+      schema: public
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://${AURORA_HOST:aurora-cluster.cluster-xxxxxx.us-east-1.rds.amazonaws.com}:${AURORA_PORT:5432}/${AURORA_DB:sampledb}
+    username: ${AURORA_USER:aurorauser}
+    password: ${AURORA_PASSWORD:aurorapass}
+  liquibase:
+    contexts: "prod"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:postgresql://${LOCAL_DB_HOST:localhost}:${LOCAL_DB_PORT:5432}/${LOCAL_DB_NAME:sampledb}
+    username: ${LOCAL_DB_USER:postgres}
+    password: ${LOCAL_DB_PASSWORD:password}
+  liquibase:
+    contexts: "local" 
